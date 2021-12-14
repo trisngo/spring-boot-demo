@@ -55,14 +55,7 @@ pipeline {
                 }
             }
         }
-    
-    stage('Create container') {
-      steps {
-          withMaven(maven : '3.6.2') {
-            sh "mvn compile jib:dockerBuild"
-        }
-      } 
-    }
+   
 
     stage("docker_scan"){
             steps {
@@ -92,7 +85,7 @@ pipeline {
     
     stage('Run container') {
           steps {
-                sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.100 -d --name milestone milestone/spring-boot-demo"
+                sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.100 -d --name milestone buiducanh68/spring-boot-demo"
           } 
         }
    
