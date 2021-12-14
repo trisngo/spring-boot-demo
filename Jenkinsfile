@@ -58,7 +58,7 @@ pipeline {
      stage('Create container') {
       steps {
           withMaven(maven : '3.6.2') {
-            sh "mvn compile jib:build"
+            sh "mvn compile jib:dockerBuild"
         }
       } 
     }
