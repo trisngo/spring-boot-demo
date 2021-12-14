@@ -79,12 +79,22 @@ pipeline {
             }
         }
     
+    stage('Push container to docker hub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+          withMaven(maven : '3.6.2') {
+            sh "mvn jib:build"
+          }
+        }
+      } 
+    }
+    
     stage('Run container') {
           steps {
                 sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.100 -d --name milestone milestone/spring-boot-demo"
           } 
         }
-    
+   
 //     stage('Create container') {
 //       steps {
 //         withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
