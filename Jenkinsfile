@@ -71,10 +71,11 @@ pipeline {
                 // docker run --network milestone -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan
                 // sleep 1
                 // wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+//                     DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
+//                     wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+//                     ./clair-scanner --clair=172.18.0.5 --ip="$DOCKER_GATEWAY" milestone/spring-boot-demo:latest || exit 0
                 sh '''
-                    DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
-                    wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
-                    ./clair-scanner --clair=172.18.0.5 --ip="$DOCKER_GATEWAY" milestone/spring-boot-demo:latest || exit 0
+                    docker exec clair clairctl analyze -l milestone/spring-boot-demo:latest
                 '''
             }
         }
