@@ -110,7 +110,7 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>2.5.2</version>
                 <configuration>
-                    <to>
+<!--                     <to>
                         <image>docker.io/maartensmeets/${project.artifactId}</image>
                         <tags>
                             <tag>${project.version}</tag>
@@ -120,6 +120,12 @@
                             <username>${env.DOCKER_USERNAME}</username>
                             <password>${env.DOCKER_PASSWORD}</password>
                         </auth>
+                    </to> -->
+                    <to>
+                        <image>milestone/${project.artifactId}</image>
+                        <tags>
+                            <tag>latest</tag>
+                        </tags>
                     </to>
                     <container>
                         <ports>
