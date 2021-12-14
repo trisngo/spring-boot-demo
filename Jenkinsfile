@@ -70,7 +70,7 @@ pipeline {
 
     stage('ZAP') {
       steps {
-            sh "docker run --network milestone -v $(pwd):/zap/wrk/ -i owasp/zap2docker-stable zap-baseline.py --spider --self-contained --recursive --start-options '-config api.disablekey=true' -t "http://172.18.0.4:9090/rest/demo/" -r baseline-report.html -l PASS"
+            sh "docker run --network milestone -v $(pwd):/zap/wrk/ -i owasp/zap2docker-stable zap-baseline.py --spider --self-contained --recursive --start-options '-config api.disablekey=true' -t \"http://172.18.0.4:9090/rest/demo/\" -r baseline-report.html -l PASS"
       } 
     }
 //     stage('Create and push container') {
