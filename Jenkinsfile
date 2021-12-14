@@ -55,6 +55,13 @@ pipeline {
                 }
             }
         }
+     stage('Create container') {
+      steps {
+          withMaven(maven : '3.6.2') {
+            sh "mvn compile jib:dockerBuild"
+        }
+      } 
+    }
 //     stage('Create and push container') {
 //       steps {
 //         withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
