@@ -62,6 +62,17 @@ pipeline {
         }
       } 
     }
+    stage('Run container') {
+      steps {
+            sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.4 -d --name milestone milestone/spring-boot-demo"
+      } 
+    }
+
+    stage('ZAP') {
+      steps {
+            sh "docker run --network milestone -v $(pwd):/zap/wrk/ -i owasp/zap2docker-stable zap-baseline.py --spider --self-contained --recursive --start-options '-config api.disablekey=true' -t "http://172.18.0.4:9090/rest/demo/" -r baseline-report.html -l PASS"
+      } 
+    }
 //     stage('Create and push container') {
 //       steps {
 //         withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
