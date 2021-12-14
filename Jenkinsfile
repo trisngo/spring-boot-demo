@@ -55,25 +55,37 @@ pipeline {
                 }
             }
         }
-     stage('Create container') {
+    
+    stage('Create container') {
       steps {
           withMaven(maven : '3.6.2') {
             sh "mvn compile jib:dockerBuild"
         }
       } 
     }
-    stage('Run container') {
-      steps {
-            sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.4 -d --name milestone milestone/spring-boot-demo"
-      } 
-    }
 
-    stage('ZAP') {
-      steps {
-            sh "docker run --network milestone -v $(pwd):/zap/wrk/ -i owasp/zap2docker-stable zap-baseline.py --spider --self-contained --recursive --start-options '-config api.disablekey=true' -t \"http://172.18.0.4:9090/rest/demo/\" -r baseline-report.html -l PASS"
-      } 
-    }
-//     stage('Create and push container') {
+    stage("docker_scan"){
+            steps {
+                // docker run --network milestone -d --name db arminc/clair-db
+                // sleep 15
+                // docker run --network milestone -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan
+                // sleep 1
+                // wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+                sh '''
+                    DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
+                    wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+                    ./clair-scanner --ip="$DOCKER_GATEWAY" milestone/sprint:latest || exit 0
+                '''
+            }
+        }
+    
+    stage('Run container') {
+          steps {
+                sh "docker run --network milestone -p 8080:8080 --ip 172.18.0.100 -d --name milestone milestone/spring-boot-demo"
+          } 
+        }
+    
+//     stage('Create container') {
 //       steps {
 //         withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
 //           withMaven(maven : '3.6.2') {
